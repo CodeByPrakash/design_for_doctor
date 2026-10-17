@@ -466,8 +466,8 @@ export default function PracticeSections() {
           </div>
 
           {/* 3 Clinical Metrics Bento Cards (Double-Bezel Architecture) */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <div className="bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3]">
+          <div className="practice-metrics-grid grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div className="practice-metric-card bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3]">
               <div className="bg-[#FAF7F0] rounded-[calc(2rem-0.5rem)] p-7 flex flex-col justify-between h-full">
                 <div>
                   <span className="text-[10.5px] font-mono uppercase tracking-[0.2em] text-[#626747] font-semibold block mb-2">
@@ -483,7 +483,7 @@ export default function PracticeSections() {
               </div>
             </div>
 
-            <div className="bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3]">
+            <div className="practice-metric-card bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3]">
               <div className="bg-[#FAF7F0] rounded-[calc(2rem-0.5rem)] p-7 flex flex-col justify-between h-full">
                 <div>
                   <span className="text-[10.5px] font-mono uppercase tracking-[0.2em] text-[#626747] font-semibold block mb-2">
@@ -499,7 +499,7 @@ export default function PracticeSections() {
               </div>
             </div>
 
-            <div className="bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3]">
+            <div className="practice-metric-card bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3]">
               <div className="bg-[#FAF7F0] rounded-[calc(2rem-0.5rem)] p-7 flex flex-col justify-between h-full">
                 <div>
                   <span className="text-[10.5px] font-mono uppercase tracking-[0.2em] text-[#626747] font-semibold block mb-2">
@@ -571,9 +571,9 @@ export default function PracticeSections() {
           </div>
 
           {/* 4 Asymmetrical Double-Bezel Pathway Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
+          <div className="journey-phases-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
             {/* Step 1 */}
-            <div className="bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3] hover:border-[#626747]/40 transition-colors">
+            <div className="journey-phase-card bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3] hover:border-[#626747]/40 transition-colors">
               <div className="bg-[#F3F0E5] rounded-[calc(2rem-0.5rem)] p-7 flex flex-col justify-between h-full">
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -596,7 +596,7 @@ export default function PracticeSections() {
             </div>
 
             {/* Step 2 */}
-            <div className="bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3] hover:border-[#626747]/40 transition-colors">
+            <div className="journey-phase-card bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3] hover:border-[#626747]/40 transition-colors">
               <div className="bg-[#F3F0E5] rounded-[calc(2rem-0.5rem)] p-7 flex flex-col justify-between h-full">
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -619,7 +619,7 @@ export default function PracticeSections() {
             </div>
 
             {/* Step 3 */}
-            <div className="bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3] hover:border-[#626747]/40 transition-colors">
+            <div className="journey-phase-card bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3] hover:border-[#626747]/40 transition-colors">
               <div className="bg-[#F3F0E5] rounded-[calc(2rem-0.5rem)] p-7 flex flex-col justify-between h-full">
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -642,7 +642,7 @@ export default function PracticeSections() {
             </div>
 
             {/* Step 4 */}
-            <div className="bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3] hover:border-[#626747]/40 transition-colors">
+            <div className="journey-phase-card bg-[#E9E6D8]/50 p-2 rounded-[2rem] border border-[#D8D3C3] hover:border-[#626747]/40 transition-colors">
               <div className="bg-[#F3F0E5] rounded-[calc(2rem-0.5rem)] p-7 flex flex-col justify-between h-full">
                 <div>
                   <div className="flex items-center justify-between mb-4">
