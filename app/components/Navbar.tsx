@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import PillNav, { PillNavItem } from './PillNav';
-import logo from './logo.svg';
 import { useScrollContext } from './SmoothScrollProvider';
 
 const NAV_ITEMS: PillNavItem[] = [
@@ -153,16 +152,12 @@ export default function Navbar({
           )}
 
           <PillNav
-            logo={logo}
-            logoAlt="Traverso Hand Surgery Emblem"
-            logoHref="#"
             items={NAV_ITEMS}
             activeHref={activeHref}
             onItemClick={handleNavClick}
             itemStyle="pill"
             hoverEffect="fill"
             indicator="dot"
-            layout="split"
             surface="glass"
             size="md"
             theme="light"
