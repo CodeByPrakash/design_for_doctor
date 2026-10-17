@@ -461,25 +461,6 @@ export default function PracticeSections() {
 
         {/* Elegant Olive & Gold Ribbon Wave Ambient Overlay Effect */}
 
-        {/* Background Ribbon Wave — behind all section content */}
-        <div
-          className="absolute top-8 sm:top-12 lg:top-16 right-[-8%] sm:right-0 lg:right-[4%] w-[680px] sm:w-[900px] lg:w-[1150px] h-[260px] sm:h-[350px] lg:h-[430px] pointer-events-none select-none z-0"
-          aria-hidden="true"
-        >
-          <div className="relative w-full h-full opacity-75 mix-blend-multiply [mask-image:radial-gradient(ellipse_at_center,black_58%,transparent_90%)]">
-            <Image
-              src="/resources/olive_gold_ribbon_wave.png"
-              alt=""
-              fill
-              sizes="(max-width: 1024px) 900px, 1150px"
-              className="object-contain object-center scale-105"
-            />
-
-            {/* Soft edge blending */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#FAF7F0] via-transparent to-[#FAF7F0] opacity-35 pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#FAF7F0] via-transparent to-[#FAF7F0]/60 opacity-30 pointer-events-none" />
-          </div>
-        </div>
 
 
         <div className="max-w-7xl mx-auto relative z-30 pointer-events-auto">

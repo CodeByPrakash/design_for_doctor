@@ -21,39 +21,50 @@ interface HandKeyframe {
 
 /**
  * Trajectory Keyframes:
- * - Section 1: Hero (Landing Page) -> EXCLUDED (scale: 0.0, completely hidden)
+ * - Section 1: Hero (Landing Page) -> Standby visible on the RIGHT SIDE (prioritized)
  * - Section 2: Conditions / Common Symptoms -> Hand on LEFT SIDE pointing at cards
  * - Section 3: About the Practice -> Hand on RIGHT SIDE
- * - Section 4: Patient Journey -> Hand on LEFT SIDE (balancing doctor image on right)
- * - Section 5: Referring Physicians -> Hand on RIGHT SIDE
+ * - Section 4: Patient Journey -> Hand on MORE LEFT (posX: -1.82) so content is better visible
+ * - Section 5: Referring Physicians -> Hand on MORE RIGHT (posX: 1.80) so protocol cards are better visible
  * - Section 6: Consultation / Contact -> Fades out cleanly
  */
 const KEYFRAMES: HandKeyframe[] = [
-  // 1. Landing Hero Page: Strictly excluded (scale: 0.0)
+  // 1. Landing Hero Page: Prioritized and standby visible on the RIGHT SIDE
   {
     progress: 0.0,
-    posX: -1.0,
-    posY: -0.20,
-    posZ: 0.0,
-    rotX: 0.28,
-    rotY: 2.85,
-    rotZ: 1.10,
-    scale: 0.0,
+    posX: 1.85,
+    posY: 0.06,
+    posZ: 0.05,
+    rotX: 0.38,
+    rotY: 0.50,
+    rotZ: 2.36,
+    scale: 2.15,
   },
-  // Smooth entrance as user scrolls from Hero down towards Symptoms
+  // As user scrolls through Hero: Glides inward and scales to normal size
   {
     progress: 0.12,
-    posX: -1.20,
-    posY: -0.25,
-    posZ: 0.02,
-    rotX: 0.28,
-    rotY: 2.85,
-    rotZ: 1.10,
-    scale: 0.90,
+    posX: 1.20,
+    posY: 0.12,
+    posZ: 0.0,
+    rotX: 0.35,
+    rotY: 0.45,
+    rotZ: 2.30,
+    scale: 1.45,
+  },
+  // Smooth glide transition to Section 2
+  {
+    progress: 0.20,
+    posX: 0.10,
+    posY: 0.05,
+    posZ: -0.05,
+    rotX: 0.32,
+    rotY: 1.65,
+    rotZ: 1.65,
+    scale: 1.38,
   },
   // 2. Section 2 (Conditions / Symptoms): Hand on LEFT BLANK SIDE
   {
-    progress: 0.30,
+    progress: 0.32,
     posX: -1.45,
     posY: -0.28,
     posZ: 0.05,
@@ -64,19 +75,19 @@ const KEYFRAMES: HandKeyframe[] = [
   },
   // Smooth glide transition across to About on the right
   {
-    progress: 0.45,
-    posX: 0.10,
+    progress: 0.46,
+    posX: 0.15,
     posY: 0.05,
     posZ: -0.05,
     rotX: 0.32,
     rotY: 1.65,
     rotZ: 1.65,
-    scale: 1.35,
+    scale: 1.38,
   },
   // 3. Section 3 (About the Practice): Hand on RIGHT SIDE
   {
     progress: 0.58,
-    posX: 1.18,
+    posX: 1.22,
     posY: 0.10,
     posZ: 0.0,
     rotX: 0.35,
@@ -84,43 +95,43 @@ const KEYFRAMES: HandKeyframe[] = [
     rotZ: 2.30,
     scale: 1.40,
   },
-  // Smooth glide transition to Patients on the left
+  // Smooth glide transition to Patients (moves to MORE LEFT)
   {
     progress: 0.68,
-    posX: -0.30,
-    posY: 0.08,
+    posX: -0.50,
+    posY: 0.06,
     posZ: 0.0,
     rotX: 0.32,
     rotY: 1.70,
     rotZ: 1.60,
-    scale: 1.32,
+    scale: 1.30,
   },
-  // 4. Section 4 (Patient Journey): Hand on LEFT SIDE (opposite doctor image on right)
+  // 4. Section 4 (Patient Journey): Hand toward MORE LEFT so content is better visible
   {
     progress: 0.78,
-    posX: -1.35,
-    posY: 0.05,
+    posX: -1.82,
+    posY: 0.02,
     posZ: 0.05,
     rotX: 0.30,
     rotY: 2.70,
     rotZ: 1.15,
-    scale: 1.28,
+    scale: 1.25,
   },
-  // 5. Section 5 (Referring Physicians): Hand on RIGHT SIDE
+  // 5. Section 5 (Referring Physicians): Hand to MORE RIGHT so protocol cards are better visible
   {
     progress: 0.88,
-    posX: 1.20,
-    posY: 0.05,
+    posX: 1.80,
+    posY: 0.02,
     posZ: 0.0,
     rotX: 0.35,
     rotY: 0.45,
     rotZ: 2.30,
-    scale: 1.35,
+    scale: 1.32,
   },
   // 6. Section 6 (Contact & Consultation): Graceful fade out
   {
     progress: 0.96,
-    posX: 1.20,
+    posX: 1.80,
     posY: -0.10,
     posZ: -0.10,
     rotX: 0.35,
@@ -130,7 +141,7 @@ const KEYFRAMES: HandKeyframe[] = [
   },
   {
     progress: 1.0,
-    posX: 1.20,
+    posX: 1.80,
     posY: -0.10,
     posZ: -0.10,
     rotX: 0.35,
@@ -416,30 +427,13 @@ function HandModel({
     const currentSpeed = scrollSpeedRef.current;
 
     // 1. Visibility Guard:
-    // - Hero landing page: EXCLUDED (sectionVisibility = 0.0)
-    // - Other pages (Symptoms, About, Patients, Referring): VISIBLE (sectionVisibility = 1.0)
-    // - Contact / footer: dissolves gracefully
+    // Standby visible throughout Hero, Symptoms, About, Patients, and Referring.
+    // Dissolves gracefully only when entering the Contact section (#contact).
     let sectionVisibility = 1.0;
 
     if (typeof document !== 'undefined') {
-      const symptomsEl = document.getElementById('symptoms');
       const contactEl = document.getElementById('contact');
       const winH = window.innerHeight;
-
-      if (symptomsEl) {
-        const symptomsRect = symptomsEl.getBoundingClientRect();
-        // While symptoms is far down (user is viewing Hero landing page), sectionVisibility is strictly 0.0
-        // When symptoms section starts entering viewport (top < winH * 0.95), smoothly fade in to 1.0
-        const enterFactor = THREE.MathUtils.clamp(
-          (winH * 0.95 - symptomsRect.top) / (winH * 0.40),
-          0,
-          1
-        );
-        sectionVisibility *= enterFactor;
-      } else {
-        // Fallback by scroll progress: 0 on hero (progress < 0.10)
-        sectionVisibility *= THREE.MathUtils.smoothstep(scrollProgress, 0.06, 0.16);
-      }
 
       // Smooth fade out only when entering the Contact consultation form section
       if (contactEl) {
@@ -451,7 +445,7 @@ function HandModel({
       }
     }
 
-    // Hide completely when excluded or dissolved
+    // Hide completely when dissolved at footer
     if (sectionVisibility <= 0.005) {
       groupRef.current.visible = false;
       return;
@@ -460,13 +454,15 @@ function HandModel({
     }
 
     // 2. Compute dynamic trajectory grounded in section DOM anchors:
+    // - Section 1: Hero (#hero) -> Prioritized standby visible on RIGHT SIDE
     // - Section 2: Symptoms (#symptoms) -> Hand on LEFT SIDE (pointing at symptom cards)
     // - Section 3: About (#about) -> Hand on RIGHT SIDE
-    // - Section 4: Patients (#patients) -> Hand on LEFT SIDE (balancing doctor image on right)
-    // - Section 5: Referring (#referring) -> Hand on RIGHT SIDE
+    // - Section 4: Patients (#patients) -> Hand toward MORE LEFT (posX: -1.82) for clear card reading
+    // - Section 5: Referring (#referring) -> Hand toward MORE RIGHT (posX: 1.80) for clear protocol reading
     let target = interpolateKeyframes(scrollProgress);
 
     if (typeof document !== 'undefined') {
+      const heroEl = document.getElementById('hero');
       const symptomsEl = document.getElementById('symptoms');
       const aboutEl = document.getElementById('about');
       const patientsEl = document.getElementById('patients');
@@ -476,6 +472,28 @@ function HandModel({
       if (symptomsEl && aboutEl) {
         const symptomsRect = symptomsEl.getBoundingClientRect();
         const aboutRect = aboutEl.getBoundingClientRect();
+
+        // Calculate scroll progress specifically through the Hero viewport (0 before scroll, 1 when scrolled into transition)
+        let heroScroll = THREE.MathUtils.clamp(scrollProgress / 0.12, 0, 1);
+        if (heroEl) {
+          const heroRect = heroEl.getBoundingClientRect();
+          heroScroll = THREE.MathUtils.clamp(-heroRect.top / Math.max(heroRect.height * 0.40, 240), 0, 1);
+        }
+
+        const lerpProp = (a: number, b: number, factor: number) =>
+          a + (b - a) * factor;
+
+        // Hero Target: On the RIGHT, standby visible and prioritized
+        const heroTarget: HandKeyframe = {
+          progress: 0.0,
+          posX: lerpProp(1.85, 1.20, heroScroll),
+          posY: lerpProp(0.06, 0.12, heroScroll),
+          posZ: lerpProp(0.05, 0.0, heroScroll),
+          rotX: lerpProp(0.38, 0.35, heroScroll),
+          rotY: lerpProp(0.50, 0.45, heroScroll),
+          rotZ: lerpProp(2.36, 2.30, heroScroll),
+          scale: lerpProp(2.15, 1.45, heroScroll),
+        };
 
         // Determine exact position of the left blank space in the Conditions / Symptoms section
         let symptomsPosX = -1.45;
@@ -510,7 +528,7 @@ function HandModel({
 
         const aboutTarget: HandKeyframe = {
           progress: 0.58,
-          posX: 1.18,
+          posX: 1.22,
           posY: 0.10,
           posZ: 0.0,
           rotX: 0.35,
@@ -519,29 +537,30 @@ function HandModel({
           scale: 1.40,
         };
 
+        // Patients Target: Adjusted to MORE LEFT (posX: -1.82) so FAQ cards and questions are completely visible
         const patientsTarget: HandKeyframe = {
           progress: 0.78,
-          posX: -1.35,
-          posY: 0.05,
+          posX: -1.82,
+          posY: 0.02,
           posZ: 0.05,
           rotX: 0.30,
           rotY: 2.70,
           rotZ: 1.15,
-          scale: 1.28,
+          scale: 1.25,
         };
 
+        // Referring Target: Adjusted to MORE RIGHT (posX: 1.80) so protocol cards are completely visible
         const referringTarget: HandKeyframe = {
           progress: 0.88,
-          posX: 1.20,
-          posY: 0.05,
+          posX: 1.80,
+          posY: 0.02,
           posZ: 0.0,
           rotX: 0.35,
           rotY: 0.45,
           rotZ: 2.30,
-          scale: 1.35,
+          scale: 1.32,
         };
 
-        const lerpProp = (a: number, b: number, factor: number) => a + (b - a) * factor;
         const lerpKeyframe = (k1: HandKeyframe, k2: HandKeyframe, factor: number): HandKeyframe => ({
           progress: scrollProgress,
           posX: lerpProp(k1.posX, k2.posX, factor),
@@ -553,20 +572,30 @@ function HandModel({
           scale: lerpProp(k1.scale, k2.scale, factor),
         });
 
-        // 1. Initial Symptoms Target
-        let activeTarget = symptomsTarget;
+        // 1. Initial Hero Target (prioritized standby on right)
+        let activeTarget = heroTarget;
 
-        // 2. Transition Symptoms -> About
+        // Transition: Hero -> Symptoms (glides across to the left)
+        const heroToSymptoms = THREE.MathUtils.clamp(
+          (winH * 0.85 - symptomsRect.top) / (winH * 0.55),
+          0,
+          1
+        );
+        if (heroToSymptoms > 0) {
+          activeTarget = lerpKeyframe(heroTarget, symptomsTarget, heroToSymptoms);
+        }
+
+        // Transition: Symptoms -> About (glides to the right)
         const symptomsToAbout = THREE.MathUtils.clamp(
           (winH * 0.25 - aboutRect.top) / (winH * 0.38),
           0,
           1
         );
         if (symptomsToAbout > 0) {
-          activeTarget = lerpKeyframe(symptomsTarget, aboutTarget, symptomsToAbout);
+          activeTarget = lerpKeyframe(activeTarget, aboutTarget, symptomsToAbout);
         }
 
-        // 3. Transition About -> Patients
+        // Transition: About -> Patients (glides to MORE LEFT)
         if (patientsEl) {
           const patientsRect = patientsEl.getBoundingClientRect();
           const aboutToPatients = THREE.MathUtils.clamp(
@@ -578,7 +607,7 @@ function HandModel({
             activeTarget = lerpKeyframe(aboutTarget, patientsTarget, aboutToPatients);
           }
 
-          // 4. Transition Patients -> Referring
+          // Transition: Patients -> Referring (glides to MORE RIGHT)
           if (referringEl) {
             const referringRect = referringEl.getBoundingClientRect();
             const patientsToReferring = THREE.MathUtils.clamp(
@@ -724,10 +753,10 @@ function HandModel({
   return (
     <group
       ref={groupRef}
-      position={[-1.45, -0.28, 0.05]}
-      rotation={[0.28, 2.85, 1.10]}
-      scale={0.0}
-      visible={false}
+      position={[1.85, 0.06, 0.05]}
+      rotation={[0.38, 0.50, 2.36]}
+      scale={2.15}
+      visible={true}
     >
       <primitive object={scene} />
     </group>
