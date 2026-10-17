@@ -51,38 +51,38 @@ const KEYFRAMES: HandKeyframe[] = [
     rotZ: 2.30,
     scale: 1.45,
   },
-  // Smooth glide transition to Section 2
+  // Smooth glide transition to Section 2 (glides down on the right side)
   {
     progress: 0.20,
-    posX: 0.10,
-    posY: 0.05,
-    posZ: -0.05,
-    rotX: 0.32,
+    posX: 1.35,
+    posY: -0.35,
+    posZ: 0.02,
+    rotX: 0.25,
     rotY: 1.65,
-    rotZ: 1.65,
-    scale: 1.38,
+    rotZ: 1.85,
+    scale: 1.35,
   },
-  // 2. Section 2 (Conditions / Symptoms): Hand on LEFT BLANK SIDE
+  // 2. Section 2 (Conditions / Symptoms): Horizontal open palm with extended fingertips
   {
     progress: 0.32,
-    posX: -1.45,
-    posY: -0.28,
+    posX: 1.30,
+    posY: -0.70,
     posZ: 0.05,
-    rotX: 0.28,
+    rotX: 0.22,
     rotY: 2.85,
-    rotZ: 1.10,
+    rotZ: 1.40,
     scale: 1.25,
   },
-  // Smooth glide transition across to About on the right
+  // Smooth glide transition up to About on the right
   {
     progress: 0.46,
-    posX: 0.15,
-    posY: 0.05,
-    posZ: -0.05,
-    rotX: 0.32,
+    posX: 1.26,
+    posY: -0.25,
+    posZ: 0.0,
+    rotX: 0.28,
     rotY: 1.65,
-    rotZ: 1.65,
-    scale: 1.38,
+    rotZ: 1.85,
+    scale: 1.35,
   },
   // 3. Section 3 (About the Practice): Hand on RIGHT SIDE
   {
@@ -495,14 +495,14 @@ function HandModel({
           scale: lerpProp(2.15, 1.45, heroScroll),
         };
 
-        // Determine exact position of the left blank space in the Conditions / Symptoms section
-        let symptomsPosX = -1.45;
-        let symptomsPosY = -0.28;
+        // Determine exact position of the bottom right area in the Conditions / Symptoms section
+        let symptomsPosX = 1.30;
+        let symptomsPosY = -0.70;
         const handZoneEl = document.getElementById('symptoms-hand-zone');
         if (handZoneEl) {
           const zoneRect = handZoneEl.getBoundingClientRect();
-          const centerX = zoneRect.left + zoneRect.width * 0.45;
-          const centerY = zoneRect.top + zoneRect.height * 0.40;
+          const centerX = zoneRect.left + zoneRect.width * 0.55;
+          const centerY = zoneRect.top + zoneRect.height * 0.50;
 
           const ndcX = (centerX / Math.max(size.width, 1)) * 2 - 1;
           const ndcY = -(centerY / Math.max(size.height, 1)) * 2 + 1;
@@ -511,8 +511,8 @@ function HandModel({
           const fovFactor = Math.tan(((persCamera.fov || 36) * Math.PI) / 360) * 5.0;
           const aspect = size.width / Math.max(size.height, 1);
 
-          symptomsPosX = Math.min(-1.35, ndcX * fovFactor * aspect);
-          symptomsPosY = ndcY * fovFactor;
+          symptomsPosX = Math.max(1.05, Math.min(1.55, ndcX * fovFactor * aspect));
+          symptomsPosY = Math.max(-0.85, Math.min(-0.35, ndcY * fovFactor));
         }
 
         const symptomsTarget: HandKeyframe = {
@@ -520,9 +520,9 @@ function HandModel({
           posX: symptomsPosX,
           posY: symptomsPosY,
           posZ: 0.05,
-          rotX: 0.28,
+          rotX: 0.22,
           rotY: 2.85,
-          rotZ: 1.10,
+          rotZ: 1.40,
           scale: 1.25,
         };
 
@@ -575,7 +575,7 @@ function HandModel({
         // 1. Initial Hero Target (prioritized standby on right)
         let activeTarget = heroTarget;
 
-        // Transition: Hero -> Symptoms (glides across to the left)
+        // Transition: Hero -> Symptoms (glides down to bottom right)
         const heroToSymptoms = THREE.MathUtils.clamp(
           (winH * 0.85 - symptomsRect.top) / (winH * 0.55),
           0,
@@ -585,7 +585,7 @@ function HandModel({
           activeTarget = lerpKeyframe(heroTarget, symptomsTarget, heroToSymptoms);
         }
 
-        // Transition: Symptoms -> About (glides to the right)
+        // Transition: Symptoms -> About (glides up to About on the right side)
         const symptomsToAbout = THREE.MathUtils.clamp(
           (winH * 0.25 - aboutRect.top) / (winH * 0.38),
           0,
@@ -706,9 +706,8 @@ function HandModel({
     const joints = fingerJointsRef.current;
     if (joints && joints.length > 0) {
       const isActivelyScrolling = currentSpeed > 0.04;
-      const pointGesture =
-        THREE.MathUtils.smoothstep(scrollProgress, 0.22, 0.35) *
-        (1 - THREE.MathUtils.smoothstep(scrollProgress, 0.44, 0.54));
+      // Keep palm open with all fingertips extended (no curling into a fist)
+      const pointGesture = 0;
 
       // Wave is driven by scroll displacement, removing all idle floating/swaying
       const baseWave = scrollProgress * 22.0;

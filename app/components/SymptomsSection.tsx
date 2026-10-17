@@ -142,7 +142,6 @@ export default function SymptomsSection({
 
           {/* Interactive Anatomical Illustration in the Left Blank Area */}
           <div
-            id="symptoms-hand-zone"
             className="w-full max-w-sm rounded-3xl bg-[#FAF7F0] border border-[#D8D3C3] p-5 shadow-xs relative overflow-hidden mt-6 group"
           >
             <div className="flex items-center justify-between mb-2 text-[10px] font-mono uppercase tracking-widest text-[#626747]">
@@ -368,6 +367,8 @@ export default function SymptomsSection({
               </div>
             </div>
           </div>
+          {/* Hand model landing zone in bottom right of section */}
+          <div id="symptoms-hand-zone" className="w-full h-24 sm:h-36 pointer-events-none" aria-hidden="true" />
         </div>
       </div>
 
