@@ -1,8 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { X, ArrowRight, Activity, ShieldCheck, Stethoscope, ChevronRight } from 'lucide-react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 export interface SymptomDetail {
   id: string;
@@ -96,11 +102,105 @@ export default function SymptomsSection({
 }) {
   const [selectedCondition, setSelectedCondition] = useState<SymptomDetail | null>(null);
   const [activeTab, setActiveTab] = useState<'carpal' | 'thumb' | 'wrist'>('carpal');
+  const sectionRef = useRef<HTMLElement>(null);
 
   const activeTabDetail = SYMPTOMS.find((s) => s.anatomyTag === activeTab) || SYMPTOMS[0];
 
+  useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      gsap.set('.symptom-card, .blueprint-card, .clinical-overview-card', {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+      });
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      // 1. Three symptom cards: subtle professional popup appear with staggered timing
+      gsap.fromTo(
+        '.symptom-card',
+        {
+          y: 35,
+          scale: 0.95,
+          autoAlpha: 0,
+        },
+        {
+          y: 0,
+          scale: 1,
+          autoAlpha: 1,
+          duration: 0.85,
+          ease: 'power3.out',
+          stagger: 0.12,
+          scrollTrigger: {
+            trigger: '.symptoms-cards-grid',
+            start: 'top 85%',
+            once: true,
+          },
+        }
+      );
+
+      // 2. Left Anatomical Blueprint card: smooth subtle popup appear
+      gsap.fromTo(
+        '.blueprint-card',
+        {
+          y: 30,
+          scale: 0.96,
+          autoAlpha: 0,
+        },
+        {
+          y: 0,
+          scale: 1,
+          autoAlpha: 1,
+          duration: 0.85,
+          delay: 0.1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.blueprint-card',
+            start: 'top 85%',
+            once: true,
+          },
+        }
+      );
+
+      // 3. Clinical Overview tab card: smooth subtle popup appear
+      gsap.fromTo(
+        '.clinical-overview-card',
+        {
+          y: 28,
+          scale: 0.97,
+          autoAlpha: 0,
+        },
+        {
+          y: 0,
+          scale: 1,
+          autoAlpha: 1,
+          duration: 0.85,
+          delay: 0.18,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: '.clinical-overview-card',
+            start: 'top 88%',
+            once: true,
+          },
+        }
+      );
+    }, sectionRef);
+
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 150);
+
+    return () => {
+      clearTimeout(timer);
+      ctx.revert();
+    };
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       id="symptoms"
       className="relative w-full py-20 md:py-28 px-6 sm:px-10 md:px-14 bg-[#F3F0E5] border-t border-[#D8D3C3]/40 z-10 scroll-mt-24"
       aria-label="Common symptoms and clinical conditions"
@@ -142,7 +242,7 @@ export default function SymptomsSection({
 
           {/* Interactive Anatomical Illustration in the Left Blank Area */}
           <div
-            className="w-full max-w-sm rounded-3xl bg-[#FAF7F0] border border-[#D8D3C3] p-5 shadow-xs relative overflow-hidden mt-6 group"
+            className="blueprint-card w-full max-w-sm rounded-3xl bg-[#FAF7F0] border border-[#D8D3C3] p-5 shadow-xs relative overflow-hidden mt-6 group transition-all duration-300 hover:shadow-lg"
           >
             <div className="flex items-center justify-between mb-2 text-[10px] font-mono uppercase tracking-widest text-[#626747]">
               <span>Anatomical Blueprint</span>
@@ -224,7 +324,7 @@ export default function SymptomsSection({
 
         {/* Right Side: Three Balanced Cards */}
         <div className="w-full lg:w-[64%] flex flex-col gap-8">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-6">
+          <div className="symptoms-cards-grid grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-6">
             {SYMPTOMS.map((card) => (
               <button
                 key={card.id}
@@ -232,7 +332,7 @@ export default function SymptomsSection({
                 onClick={() => setSelectedCondition(card)}
                 onMouseEnter={() => onHoverAnatomy?.(card.anatomyTag)}
                 onMouseLeave={() => onHoverAnatomy?.(null)}
-                className="group flex flex-col text-left rounded-3xl bg-[#FAF7F0] border border-[#D8D3C3] overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1.5 hover:border-[#626747]/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#626747]/30"
+                className="symptom-card group flex flex-col text-left rounded-3xl bg-[#FAF7F0] border border-[#D8D3C3] overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1.5 hover:border-[#626747]/60 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#626747]/30"
               >
                 {/* Card Image Container */}
                 <div className="relative w-full aspect-square overflow-hidden bg-[#E9E6D8] p-3">
@@ -266,7 +366,7 @@ export default function SymptomsSection({
           </div>
 
           {/* ── Interactive Shadcn-style Anatomy Tabs ── */}
-          <div className="p-6 rounded-3xl bg-[#FAF7F0] border border-[#D8D3C3]">
+          <div className="clinical-overview-card p-6 rounded-3xl bg-[#FAF7F0] border border-[#D8D3C3]">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-4 border-b border-[#D8D3C3]/50">
               <div>
                 <span className="text-[10.5px] uppercase tracking-widest font-mono text-[#626747] font-semibold block">

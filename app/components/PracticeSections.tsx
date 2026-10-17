@@ -1,7 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 import {
   CheckCircle2,
   Calendar,
@@ -62,6 +68,88 @@ export default function PracticeSections() {
       setTimeout(() => setCopiedPhone(false), 2200);
     }
   };
+
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      gsap.set('.practice-metric-card, .journey-phase-card, .physician-pillar-card', {
+        autoAlpha: 1,
+        y: 0,
+        scale: 1,
+      });
+      return;
+    }
+
+    const ctx = gsap.context(() => {
+      // 1. Metric cards in About: smooth popup appear
+      gsap.fromTo(
+        '.practice-metric-card',
+        { y: 32, scale: 0.96, autoAlpha: 0 },
+        {
+          y: 0,
+          scale: 1,
+          autoAlpha: 1,
+          duration: 0.85,
+          ease: 'power3.out',
+          stagger: 0.12,
+          scrollTrigger: {
+            trigger: '.practice-metrics-grid',
+            start: 'top 85%',
+            once: true,
+          },
+        }
+      );
+
+      // 2. Journey phase cards in Patients: smooth popup appear
+      gsap.fromTo(
+        '.journey-phase-card',
+        { y: 35, scale: 0.96, autoAlpha: 0 },
+        {
+          y: 0,
+          scale: 1,
+          autoAlpha: 1,
+          duration: 0.85,
+          ease: 'power3.out',
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: '.journey-phases-grid',
+            start: 'top 85%',
+            once: true,
+          },
+        }
+      );
+
+      // 3. Physician collaboration cards: smooth popup appear
+      gsap.fromTo(
+        '.physician-pillar-card',
+        { y: 30, scale: 0.97, autoAlpha: 0 },
+        {
+          y: 0,
+          scale: 1,
+          autoAlpha: 1,
+          duration: 0.8,
+          ease: 'power3.out',
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: '.physician-pillars-grid',
+            start: 'top 85%',
+            once: true,
+          },
+        }
+      );
+    }, containerRef);
+
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 200);
+
+    return () => {
+      clearTimeout(timer);
+      ctx.revert();
+    };
+  }, []);
 
   // ── Physician Triage Profiles ──
   const REFERRAL_TIERS = [
@@ -132,7 +220,7 @@ export default function PracticeSections() {
   ];
 
   return (
-    <div className="w-full bg-[#F3F0E5] text-[#2D3525] relative z-10">
+    <div ref={containerRef} className="w-full bg-[#F3F0E5] text-[#2D3525] relative z-10">
 
       {/* ─────────────────────────────────────────────────────────────
           1. ABOUT THE PRACTICE SECTION (#about)
